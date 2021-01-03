@@ -2,9 +2,12 @@
 Class representing a P1 telegram and the messages contained within
 """
 
+import collections
 import logging
+from typing import Any, Dict, List, Optional, Tuple, Type, cast
 
 from p1_mqtt.p1.objects import parse_p1_object
+from p1_mqtt.p1.objects.p1object import P1Object, SupportsUnixtimestamp
 
 LOGGER = logging.getLogger(__name__)
 
@@ -14,7 +17,21 @@ class P1Telegram:
     A class representing a complete P1 telegram
     """
 
-    def __init__(self, buf):
+    @classmethod
+    def from_objects(cls: Type["P1Telegram"], objects: List[P1Object]) -> "P1Telegram":
+        """
+        Create a new telegram populated with the given
+        objects
+        """
+        # We have to pass a buffer, so pass one that only
+        # consists of a checksum
+        instance = cls(b"!18c0")
+
+        instance._objects = objects.copy()
+
+        return instance
+
+    def __init__(self, buf: bytes) -> None:
         """
         Using the binary data in `buf`, attemt to parse the
         data as a telegram.
@@ -31,11 +48,11 @@ class P1Telegram:
         self._meterid = ""
         self._buffer = buf
         self._validate_checksum()
-        self._objects = []
+        self._objects: List[P1Object] = []
         self.unparseable = 0  # Number of unparseable objects
         self._parse_objects()
 
-    def _validate_checksum(self):
+    def _validate_checksum(self) -> None:
         """
         Validate the checksum of the data in the internal buffer
 
@@ -66,7 +83,7 @@ class P1Telegram:
                 "Invalid checksum, expected %04x, got %04x" % (msgsum, remainder)
             )
 
-    def _parse_objects(self):
+    def _parse_objects(self) -> None:
         """
         Parse the telegram into a list of objects contained within.
         """
@@ -90,23 +107,69 @@ class P1Telegram:
             # object
             try:
                 self._objects.append(parse_p1_object(line))
-            except ValueError:
-                LOGGER.error("Could not parse object %s", line)
+            except ValueError as exc:
+                LOGGER.error("Could not parse object %s: %s", line, exc)
                 self.unparseable += 1
 
-    def to_mqtt(self):
+    def to_mqtt(self) -> Dict[str, Any]:
         """
         Return a dictionary representation of the telegram that can be
         fed to mqtt.
 
         This goes through all the objects from the telegram, calls their
         to_mqtt methods, and joins all outputs together
+
+        In addition, if the telegram as a time stamp indicator,
+        add this an additional field.
         """
 
-        output = {}
+        output: Dict[str, Any] = {}
 
         for obj in self._objects:
             output.update(obj.to_mqtt())
 
-        LOGGER.info(output)
+        if self.timestamp is not None:
+            output["_timestamp"] = int(self.timestamp)
+
         return output
+
+    def split_by_channel(self) -> Tuple["P1Telegram", ...]:
+        """
+        Return a tuple of new Telegrams, split by channel, where each new
+        telegram only contains objects from one channel
+        """
+
+        telegrams: Dict[int, List[P1Object]] = collections.defaultdict(list)
+
+        for obj in self._objects:
+            # We ignore channel 3 for now, it's sorta weird
+            # and only contains the version field
+            if obj.channel == 3:
+                continue
+
+            telegrams[obj.channel].append(obj)
+
+        LOGGER.debug("Found split channels %s", telegrams.keys())
+
+        return tuple(P1Telegram.from_objects(x) for x in telegrams.values())
+
+    @property
+    def timestamp(self) -> Optional[int]:
+        """
+        Go through the objects and find ones that are marked as
+        time stamp candidates. If there's only one, return the
+        timestamp indicated.
+
+        If there are none or more than one, return None
+        """
+
+        # I hope there's a more elegant way of doing this
+        candidates: Tuple[SupportsUnixtimestamp] = cast(
+            Tuple[SupportsUnixtimestamp],
+            tuple(x for x in self._objects if x.is_timestamp),
+        )
+
+        if len(candidates) == 1:
+            return candidates[0].to_unixtimestamp()
+
+        return None
