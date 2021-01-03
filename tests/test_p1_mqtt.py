@@ -50,11 +50,11 @@ TESTDATA = (
             "p1_energy_consumed_tariff2": 24.413,
             "p1_energy_produced_tariff1": 0.0,
             "p1_energy_produced_tariff2": 0.0,
-            "p1_gas_consumed_timestamp": 1509909000.0,
+            "p1_gas_consumed_timestamp": 1509909000,
             "p1_gas_consumed_volume": 16.713,
             "p1_long_power_faiilure_count": 1.0,
             "p1_power_faiilure_count": 3.0,
-            "p1_timestamp": 1509909204.0,
+            "p1_timestamp": 1509909204,
             "p1_voltage_l1": 229.0,
             "p1_voltage_sag_l1_count": 2.0,
             "p1_voltage_swell_l1_count": 0.0,
@@ -116,11 +116,11 @@ TESTDATA = (
             "p1_energy_consumed_tariff2": 0.0,
             "p1_energy_produced_tariff1": 210.088,
             "p1_energy_produced_tariff2": 0.0,
-            "p1_gas_consumed_timestamp": 1485288000.0,
+            "p1_gas_consumed_timestamp": 1485288000,
             "p1_gas_consumed_volume": 671.79,
             "p1_long_power_faiilure_count": 1.0,
             "p1_power_faiilure_count": 1.0,
-            "p1_timestamp": 1485289888.0,
+            "p1_timestamp": 1485289888,
             "p1_voltage_sag_l1_count": 0.0,
             "p1_voltage_sag_l2_count": 0.0,
             "p1_voltage_sag_l3_count": 0.0,
@@ -153,3 +153,7 @@ def test_p1_mqtt(testcase, expected):
     # \r\n, which the checksum calculation expects. Fix this.
     telegram = parser.feed(testcase.replace(b"\n", b"\r\n"))[0]
     assert telegram.to_mqtt() == expected
+
+    # These telegrams should not have a time stamp, as there are two
+    # channels in each
+    assert telegram.timestamp is None
