@@ -7,7 +7,7 @@ import logging
 from typing import Any, Dict, List, Optional, Tuple, Type, cast
 
 from p1_mqtt.p1.objects import parse_p1_object
-from p1_mqtt.p1.objects.p1object import P1Object, SupportsUnixtimestamp
+from p1_mqtt.p1.p1object import P1Object, SupportsUnixtimestamp
 
 LOGGER = logging.getLogger(__name__)
 
