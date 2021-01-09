@@ -41,6 +41,8 @@ TESTDATA = (
     """,
         (
             {
+                "_channel": 0,
+                "_device_id": "E0047000007630817",
                 "_timestamp": 1509909204,
                 "p1_actual_power_consuming": 0.335,
                 "p1_actual_power_consuming_l1": 0.335,
@@ -59,6 +61,8 @@ TESTDATA = (
                 "p1_voltage_swell_l1_count": 0.0,
             },
             {
+                "_channel": 1,
+                "_device_id": "G0058530001163217",
                 "_timestamp": 1509909000,
                 "p1_device_type": 3.0,
                 "p1_gas_consumed_timestamp": 1509909000,
@@ -107,6 +111,8 @@ TESTDATA = (
         """,
         (
             {
+                "_channel": 0,
+                "_device_id": "E0026000024494315",
                 "_timestamp": 1485289888,
                 "p1_actual_power_consuming": 2.793,
                 "p1_actual_power_consuming_l1": 0.503,
@@ -134,6 +140,8 @@ TESTDATA = (
                 "p1_voltage_swell_l3_count": 0.0,
             },
             {
+                "_channel": 1,
+                "_device_id": "G0031003378791616",
                 "_timestamp": 1485288000,
                 "p1_device_type": 3.0,
                 "p1_gas_consumed_timestamp": 1485288000,
