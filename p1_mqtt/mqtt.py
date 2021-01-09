@@ -102,6 +102,9 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
         client.publish(
             config["mqtt_topic"]
-            % {"serial": data["p1mqtt_device_id"], "channel": data["p1mqtt_channel"]},
+            % {
+                "device_id": data["p1mqtt_device_id"],
+                "channel": data["p1mqtt_channel"],
+            },
             json.dumps(data),
         )

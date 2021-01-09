@@ -22,7 +22,7 @@ LOGGER = logging.getLogger(__name__)
 DEFAULTS: Dict[str, Any] = {
     "mqtt_port": 1883,
     "buffer_size": 100000,
-    "mqtt_topic": "p1-mqtt/tele/%(channel)s/%(serial)s/SENSOR",
+    "mqtt_topic": "p1-mqtt/tele/%(channel)s/%(device_id)s/SENSOR",
     "mqtt_client_id": "p1-mqtt-gateway",
 }
 
