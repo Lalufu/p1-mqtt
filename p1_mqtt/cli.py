@@ -216,11 +216,12 @@ def p1_mqtt() -> None:
 
     # Wait forever for one of the processes to die. If that happens,
     # kill the whole program.
-    while True:
+    run = True
+    while run:
         for proc in procs:
             if not proc.is_alive():
                 LOGGER.error("Child process died, terminating program")
-                break
+                run = False
 
         time.sleep(1)
 
