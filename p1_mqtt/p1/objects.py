@@ -190,6 +190,16 @@ class P1EquipmentIdentfier(P1OctetString):
     """
     Represent the P1 equipment identifier
     """
+    def __init__(self, string: str):
+        super().__init__(string)
+        self.is_device_id = True
+
+    def device_id(self) -> str:
+        """
+        Return a string representing a device ID
+        information within this object
+        """
+        return self.string.decode('ASCII')
 
 
 @register_p1(r"1-0:1\.8\.1")
@@ -442,6 +452,16 @@ class P1GasEquipmentIdentfier(P1OctetString):
     """
     Represent the P1 gas equipment identifier at channel X
     """
+    def __init__(self, string: str):
+        super().__init__(string)
+        self.is_device_id = True
+
+    def device_id(self) -> str:
+        """
+        Return a string representing a device ID
+        information within this object
+        """
+        return self.string.decode('ASCII')
 
 
 @register_p1(r"0-\d:24\.2\.1")
