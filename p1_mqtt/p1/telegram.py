@@ -25,7 +25,7 @@ class P1Telegram:
         """
         # We have to pass a buffer, so pass one that only
         # consists of a checksum
-        instance = cls(b"!18c0")
+        instance = cls(b"!18c0\n\r")
 
         instance._objects = objects.copy()
 
@@ -40,10 +40,10 @@ class P1Telegram:
         by the P1Builder class):
 
         - It will start with a '/' character
-        - It will end with a '\n\r|....' sequence, where the .... can be
+        - It will end with a '\n\r|....\n\r' sequence, where the .... can be
           hex chars
-        - The data between the initial / and the terminating | does not contain
-          any further
+        - The data between the initial / and the terminating ! does not contain
+          any further / or !
         """
         self._meterid = ""
         self._buffer = buf
@@ -59,14 +59,17 @@ class P1Telegram:
         The checksum is a 16 bit number, encoded in the last four hex
         characters, and is calculated over everything from the star of
         the buffer up until and including the ! before the checksum
+
+        The buffer ends with the checksum and \n\r, take this into
+        consideration.
         """
-        msgsum = int(self._buffer[-4:].decode("ascii"), 16)
+        msgsum = int(self._buffer[-6:-2].decode("ascii"), 16)
         LOGGER.debug("In-message checksum: %04x", msgsum)
 
         # The checksum algorithm is CRC16, IBM style
         # Initial value is 0x0000, polynomial is 0xA001
         remainder = 0x0000
-        for i in self._buffer[:-4]:
+        for i in self._buffer[:-6]:
             remainder ^= i
             for _ in range(0, 8):
                 if remainder & 0x0001:

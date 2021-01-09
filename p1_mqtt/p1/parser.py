@@ -56,7 +56,10 @@ class P1Parser:
 
             # A potential telegram ends with "\r\n!<checksum>", where checksum
             # is four hex characters representing a 16 bit number.
-            match = re.search(b"\r\n\\![0-9a-fA-F]{4}", self._buffer)
+            #
+            # The match includes the final line breaks as those belong to
+            # the telegram as well, and would otherwise remain in the buffer
+            match = re.search(b"\r\n\\![0-9a-fA-F]{4}\r\n", self._buffer)
 
             if match:
                 tstring = self._buffer[0 : match.end()]
