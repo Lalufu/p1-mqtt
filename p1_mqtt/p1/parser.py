@@ -23,7 +23,7 @@ class P1Parser:
     def __init__(self):
         self._buffer = b""
 
-    def __len__(self) -> Optional[int]:
+    def __len__(self) -> int:
         """
         The length of a parser object is the number of bytes in
         the buffer
@@ -45,6 +45,10 @@ class P1Parser:
 
         # Lopp to find all telegrams
         while True:
+            # If the buffer is empty, break
+            if len(self._buffer) == 0:
+                break
+
             # A telegram starts with a / character (which appears nowhere else in
             # a telegram). Find the first occurrence
             try:
