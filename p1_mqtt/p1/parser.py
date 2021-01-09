@@ -5,7 +5,7 @@ teletrams
 
 import logging
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from p1_mqtt.p1.telegram import P1Telegram
 
@@ -22,6 +22,13 @@ class P1Parser:
 
     def __init__(self):
         self._buffer = b""
+
+    def __len__(self) -> Optional[int]:
+        """
+        The length of a parser object is the number of bytes in
+        the buffer
+        """
+        return len(self._buffer)
 
     def feed(self, inputdata: bytes) -> Tuple[P1Telegram, ...]:
         """

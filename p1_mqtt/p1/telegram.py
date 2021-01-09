@@ -52,6 +52,19 @@ class P1Telegram:
         self.unparseable = 0  # Number of unparseable objects
         self._parse_objects()
 
+    def __len__(self) -> Optional[int]:
+        """
+        The length of a telegram is the length of the binary data it
+        was parsed from. Objects created via from_objects do not have
+        the binary data, and their length is None.
+        """
+
+        if self._buffer == b"!18c0\n\r":
+            # Created through from_objects
+            return None
+
+        return len(self._buffer)
+
     def _validate_checksum(self) -> None:
         """
         Validate the checksum of the data in the internal buffer
