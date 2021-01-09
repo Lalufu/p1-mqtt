@@ -7,7 +7,7 @@ import logging
 from typing import Any, Dict, List, Optional, Tuple, Type, cast
 
 from p1_mqtt.p1.objects import parse_p1_object
-from p1_mqtt.p1.p1object import P1Object, SupportsUnixtimestamp
+from p1_mqtt.p1.p1object import P1Object, SupportsDeviceID, SupportsUnixtimestamp
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,16 +52,16 @@ class P1Telegram:
         self.unparseable = 0  # Number of unparseable objects
         self._parse_objects()
 
-    def __len__(self) -> Optional[int]:
+    def __len__(self) -> int:
         """
         The length of a telegram is the length of the binary data it
         was parsed from. Objects created via from_objects do not have
-        the binary data, and their length is None.
+        the binary data, and their length is 0.
         """
 
         if self._buffer == b"!18c0\n\r":
             # Created through from_objects
-            return None
+            return 0
 
         return len(self._buffer)
 
@@ -145,7 +145,13 @@ class P1Telegram:
             output.update(obj.to_mqtt())
 
         if self.timestamp is not None:
-            output["_timestamp"] = int(self.timestamp)
+            output["p1mqtt_timestamp"] = int(self.timestamp)
+
+        if self.device_id is not None:
+            output["p1mqtt_device_id"] = self.device_id
+
+        if self.channel is not None:
+            output["p1mqtt_channel"] = self.channel
 
         return output
 
@@ -187,5 +193,41 @@ class P1Telegram:
 
         if len(candidates) == 1:
             return candidates[0].to_unixtimestamp()
+
+        return None
+
+    @property
+    def device_id(self) -> Optional[str]:
+        """
+        Go through the objects and find ones that are marked as
+        device ID candidates. If there's only one, return the
+        device ID indicated.
+
+        If there are none or more than one, return None
+        """
+
+        # I hope there's a more elegant way of doing this
+        candidates: Tuple[SupportsDeviceID] = cast(
+            Tuple[SupportsDeviceID], tuple(x for x in self._objects if x.is_device_id),
+        )
+
+        if len(candidates) == 1:
+            return candidates[0].device_id()
+
+        return None
+
+    @property
+    def channel(self) -> Optional[int]:
+        """
+        If all objects in the telegram come from the same
+        channel, return that channel number.
+
+        Otherwise return None
+        """
+
+        channels = {x.channel for x in self._objects}
+
+        if len(channels) == 1:
+            return channels.pop()
 
         return None
