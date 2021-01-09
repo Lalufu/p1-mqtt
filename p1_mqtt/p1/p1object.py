@@ -23,6 +23,17 @@ class SupportsUnixtimestamp(Protocol):
         ...
 
 
+# This is a class describing the ability to support
+# the device_id functionality
+class SupportsDeviceID(Protocol):
+    def device_id(self) -> str:
+        """
+        Return a string representing a device ID
+        information within this object
+        """
+        ...
+
+
 def _decode_p1_octetstring(string: str) -> bytearray:
     """
     Return a decoded version of a P1 octet string
@@ -100,7 +111,7 @@ class P1Object:
 
         self._mqtt_fields: Tuple[str, ...] = ()
         self.is_timestamp = False
-        self.device_id = None
+        self.is_device_id = False
 
         # Find the reference
         index = string.index("(")
