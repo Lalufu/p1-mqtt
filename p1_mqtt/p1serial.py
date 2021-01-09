@@ -5,7 +5,7 @@ and P1 telegram parsing
 
 import logging
 import multiprocessing
-from typing import Any, Dict
+from typing import Any, BinaryIO, Dict, Optional
 
 import serial  # type: ignore
 
@@ -43,9 +43,9 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
     # Try to find out how many bytes to read from the serial port.
     #
     # Running the P1 parser is somewhat expensive, so ideally we want to
-    # run one complete telegram from the serial port (and not more!) and then
+    # read one complete telegram from the serial port (and not more!) and then
     # run the parser to produce one telegram object, leaving no data in the
-    # parser buffer. We do not know the length of a telegram, though.
+    # parser buffer. We do not know the length of a telegram.
     #
     # The length of a telegram is pretty static, though. Most fields have
     # a fixed length, and the fields that have a varying length change
@@ -57,7 +57,7 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
     # If this assumption is wrong, one of two things will happen:
     #
     # - The new telegram is shorter than the old one. The parser will
-    #   produce a telegram, and have data remaining in it, which constitures
+    #   produce a telegram, and have data remaining in it, which constitutes
     #   the start of another telegram. In this case, adjust the read size
     #   to read the remainder of the next telegram. Once we are in sync
     #   again (the parser produced a telegram and has 0 bytes remaining
@@ -65,7 +65,8 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
     #
     # - The new telegram is longer than the old one. The parser will not
     #   produce a telegram, and have data remaining in it. In this case,
-    #   adjust the read size down to the minimum, and read data until we
+    #   adjust the read size down to the minimum (we're probably not missing
+    #   a lot of data), and read data until we
     #   hit the first case, which will get us back into sync
 
     # This is the size of the last telegram parsed, and our best guess
@@ -88,6 +89,13 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
     LOGGER.info("p1 process starting")
 
+    # If needed, open the serial log file
+    if "serial_dump" in config:
+        dumpfile: Optional[BinaryIO] = open(config["serial_dump"], "wb")
+        LOGGER.info("Writing serial data to %s", config["serial_dump"])
+    else:
+        dumpfile = None
+
     # Open the serial port
     portconf = DSMR_PARAMETERS[config["dsmr"]]
     ser = serial.Serial(
@@ -108,6 +116,10 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
             serial_read_size,
         )
         data = ser.read(max(64, serial_read_size))
+
+        if dumpfile is not None:
+            dumpfile.write(data)
+            dumpfile.flush()
 
         # Feed data to the parser, receiving telegrams
         telegrams = parser.feed(data)
