@@ -96,7 +96,11 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
     else:
         dumpfile = None
 
-    # Open the serial port
+    # Open the serial port.
+    #
+    # The timeout is mainly there to deal with wrong speed
+    # settings, if we have not heard anything for 30 seconds it's
+    # likely something is wrong
     portconf = DSMR_PARAMETERS[config["dsmr"]]
     ser = serial.Serial(
         config["device"],
@@ -104,6 +108,7 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
         bytesize=portconf["databits"],
         parity=portconf["parity"],
         stopbits=portconf["stopbits"],
+        timeout=30,
     )
 
     parser = P1Parser()
@@ -115,7 +120,15 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
             telegram_size,
             serial_read_size,
         )
-        data = ser.read(max(64, serial_read_size))
+        to_read = max(64, serial_read_size)
+        data = ser.read(max(64, to_read))
+
+        if len(data) != to_read:
+            raise RuntimeError(
+                "Timeout reading from serial port, check "
+                "connection and that the DSMR setting is "
+                "correct"
+            )
 
         if dumpfile is not None:
             dumpfile.write(data)
