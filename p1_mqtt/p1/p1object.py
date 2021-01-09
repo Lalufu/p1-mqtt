@@ -5,7 +5,7 @@ Object definition for the base P1Object
 import datetime
 import logging
 import re
-from typing import Any, Dict, Tuple, Protocol
+from typing import Any, Dict, Protocol, Tuple
 
 import pytz
 

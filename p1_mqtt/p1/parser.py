@@ -5,7 +5,7 @@ teletrams
 
 import logging
 import re
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 from p1_mqtt.p1.telegram import P1Telegram
 

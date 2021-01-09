@@ -11,7 +11,7 @@ import threading
 import time
 from typing import Any, Dict
 
-import paho.mqtt.client as mqtt
+import paho.mqtt.client as mqtt  # type: ignore
 
 LOGGER = logging.getLogger(__name__)
 

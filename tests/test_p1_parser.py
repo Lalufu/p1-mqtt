@@ -457,7 +457,14 @@ def test_p1_parser(testcase, validcount):
     # \r\n, which the checksum calculation expects. Fix this.
     # Also, feed the data by single characters to test the reassembly
     res = []
-    for data in (bytes([x,]) for x in testcase.replace(b"\n", b"\r\n")):
+    for data in (
+        bytes(
+            [
+                x,
+            ]
+        )
+        for x in testcase.replace(b"\n", b"\r\n")
+    ):
         res.extend(parser.feed(data))
     assert len(res) == validcount
 
