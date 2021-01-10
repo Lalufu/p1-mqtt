@@ -6,10 +6,11 @@ authors = ["Ralf Ertzinger <ralf@skytale.net>"]
 license = "GPL-3.0-only"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.6"
 pyserial = "^3.5"
 pytz = "^2020.5"
 paho-mqtt = "^1.5.1"
+typing_extensions = "^3.7.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"
