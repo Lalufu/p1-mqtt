@@ -211,16 +211,16 @@ class P1EnergyConsumedTariff1(P1UnitFloat):
 
 
 @register_p1(r"1-0:1\.8\.2")
-class P1EnergyProducedTariff1(P1UnitFloat):
+class P1EnergyConsumedTariff2(P1UnitFloat):
     """
-    Represent energy produced by client, tariff 1
+    Represent energy delivered to client, tariff 2
     """
 
 
 @register_p1(r"1-0:2\.8\.1")
-class P1EnergyConsumedTariff2(P1UnitFloat):
+class P1EnergyProducedTariff1(P1UnitFloat):
     """
-    Represent energy delivered to client, tariff 2
+    Represent energy produced by client, tariff 1
     """
 
 
