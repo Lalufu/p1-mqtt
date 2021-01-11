@@ -5,9 +5,10 @@ Object definition for the base P1Object
 import datetime
 import logging
 import re
-from typing import Any, Dict, Protocol, Tuple
+from typing import Any, Dict, Tuple
 
 import pytz
+from typing_extensions import Protocol
 
 LOGGER = logging.getLogger(__name__)
 
