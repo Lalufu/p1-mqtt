@@ -20,9 +20,13 @@ for talking to MQTT.
 
 This project uses [Poetry](https://python-poetry.org/) for dependency
 management, and it's probably easiest to use this, Executing `poetry install 
---no-dev` followerd by `poetry run p1-mqtt` from the git checkout root should
+--no-dev` followed by `poetry run p1-mqtt` from the git checkout root should
 set up a venv, install the required dependencies into a venv and run
 the main program.
+
+Installation via pip into a venv is also possible with `pip install .` from
+the git checkout root. This will also create the executable scripts in the
+`bin` dir of the checkout.
 
 In case you want to do things manually, the main entry point into
 the program is `p1_mqtt/cli.py:p1_mqtt()`.
