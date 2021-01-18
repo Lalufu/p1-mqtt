@@ -218,12 +218,16 @@ def p1_mqtt() -> None:
     # kill the whole program.
     run = True
     while run:
-        for proc in procs:
-            if not proc.is_alive():
-                LOGGER.error("Child process died, terminating program")
-                run = False
+        try:
+            for proc in procs:
+                if not proc.is_alive():
+                    LOGGER.error("Child process died, terminating program")
+                    run = False
 
-        time.sleep(1)
+            time.sleep(1)
+        except KeyboardInterrupt:
+            LOGGER.info("Caught keyboard interrupt, exiting")
+            run = False
 
     for proc in procs:
         proc.terminate()
