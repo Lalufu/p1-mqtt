@@ -170,4 +170,8 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
         # those to the MQTT process
         for telegram in telegrams:
             for subtelegram in telegram.split_by_channel():
-                queue.put(subtelegram.to_mqtt())
+                # Ignore errors here
+                try:
+                    queue.put(subtelegram.to_mqtt())
+                except Exception:
+                    pass
