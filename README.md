@@ -139,3 +139,81 @@ console. These are usually harmless, and mainly for informational purposes.
 Since the script does not know the telegram size at startup there will be
 at least some messages about loss of sync, and resync, during startup. This
 is normal.
+
+
+## Example output
+
+Using the default parameters, the telegram
+
+```
+/Ene5\XS210 ESMR 5.0
+
+1-3:0.2.8(50)
+0-0:1.0.0(171105201324W)
+0-0:96.1.1(4530303437303030303037363330383137)
+1-0:1.8.1(000051.775*kWh)
+1-0:1.8.2(000000.000*kWh)
+1-0:2.8.1(000024.413*kWh)
+1-0:2.8.2(000000.000*kWh)
+0-0:96.14.0(0001)
+1-0:1.7.0(00.335*kW)
+1-0:2.7.0(00.000*kW)
+0-0:96.7.21(00003)
+0-0:96.7.9(00001)
+1-0:99.97.0(0)(0-0:96.7.19)
+1-0:32.32.0(00002)
+1-0:32.36.0(00000)
+0-0:96.13.0()
+1-0:32.7.0(229.0*V)
+1-0:31.7.0(001*A)
+1-0:21.7.0(00.335*kW)
+1-0:22.7.0(00.000*kW)
+0-1:24.1.0(003)
+0-1:96.1.0(4730303538353330303031313633323137)
+0-1:24.2.1(171105201000W)(00016.713*m3)
+!8F46
+```
+
+will result in two messages being sent to MQTT.
+
+The first message will be sent to the topic
+`p1-mqtt/tele/0/E0047000007630817/SENSOR` and consist of the below
+data:
+
+```
+{
+    "p1mqtt_channel": 0,
+    "p1mqtt_device_id": "E0047000007630817",
+    "p1mqtt_timestamp": 1509909204,
+    "p1_actual_power_consuming": 0.335,
+    "p1_actual_power_consuming_l1": 0.335,
+    "p1_actual_power_producing": 0.0,
+    "p1_actual_power_producing_l1": 0.0,
+    "p1_current_l1": 1.0,
+    "p1_energy_consumed_tariff1": 51.775,
+    "p1_energy_consumed_tariff2": 24.413,
+    "p1_energy_produced_tariff1": 0.0,
+    "p1_energy_produced_tariff2": 0.0,
+    "p1_long_power_faiilure_count": 1.0,
+    "p1_power_faiilure_count": 3.0,
+    "p1_timestamp": 1509909204,
+    "p1_voltage_l1": 229.0,
+    "p1_voltage_sag_l1_count": 2.0,
+    "p1_voltage_swell_l1_count": 0.0
+}
+```
+
+The second message will be sent to the topic
+`p1-mqtt/tele/1/G0058530001163217/SENSOR` and consist of the below
+data:
+
+```
+{
+    "p1mqtt_channel": 1,
+    "p1mqtt_device_id": "G0058530001163217",
+    "p1mqtt_timestamp": 1509909000,
+    "p1_device_type": 3.0,
+    "p1_gas_consumed_timestamp": 1509909000,
+    "p1_gas_consumed_volume": 16.713
+}
+```
