@@ -253,14 +253,14 @@ class P1ActualPowerProducing(P1UnitFloat):
 
 
 @register_p1(r"0-0:96\.7\.21")
-class P1PowerFaiilureCount(P1Float):
+class P1PowerFailureCount(P1Float):
     """
     Represent the number of power failures in any phase
     """
 
 
 @register_p1(r"0-0:96\.7\.9")
-class P1LongPowerFaiilureCount(P1Float):
+class P1LongPowerFailureCount(P1Float):
     """
     Represent the number of long power failures in any phase
     """
