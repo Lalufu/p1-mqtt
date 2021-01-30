@@ -62,17 +62,6 @@ def load_config_file(filename: str) -> Dict[str, Any]:
         config["mqtt_client_id"] = ini.get("general", "mqtt-client-id")
 
     try:
-        if ini.has_option("general", "dewpoint"):
-            config["dewpoint"] = ini.getboolean("general", "dewpoint")
-    except ValueError:
-        LOGGER.error(
-            "%s: %s is not a valid value for dewpoint",
-            filename,
-            ini.get("general", "dewpoint"),
-        )
-        raise SystemExit(1)
-
-    try:
         if ini.has_option("general", "buffer-size"):
             config["buffer_size"] = ini.getint("general", "buffer-size")
     except ValueError:
