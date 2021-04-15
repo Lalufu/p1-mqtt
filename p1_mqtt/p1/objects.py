@@ -10,7 +10,8 @@ from typing import Dict, List, Tuple, Type
 
 import pytz
 
-from .p1object import P1Object, _utc_unixtime
+from .p1object import (P1Object, _decode_p1_octetstring, _decode_p1_tst,
+                       _decode_p1_unitfloat, _utc_unixtime)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,50 +59,6 @@ def register_p1(reference: str):
         return wrapper_register_p1
 
     return decorator_register_p1
-
-
-def _decode_p1_octetstring(string: str) -> bytearray:
-    """
-    Return a decoded version of a P1 octet string
-    """
-    return bytearray.fromhex(string)
-
-
-def _decode_p1_tst(string: str) -> datetime.datetime:
-    """
-    Return a decoded version of a P1 TST (time stamp),
-    complete with time zone.
-
-    The P1 documentation does not seem to specify a time zone per
-    se, only a summer time/winter time marker.
-
-    Assume for now that S means GMT+2, and W means GMT+1.
-
-    In an added twist, the time zones associated with these offsets in
-    pytz are called "Etc/GMT-1" and "Etc/GMT-2".
-    """
-
-    if string.endswith("S"):
-        timezone = pytz.timezone("Etc/GMT-2")
-    elif string.endswith("W"):
-        timezone = pytz.timezone("Etc/GMT-1")
-    else:
-        raise ValueError("%s is not a valid P1 TST" % (string,))
-
-    string = string[:-1]
-
-    return datetime.datetime.strptime(string, "%y%m%d%H%M%S").replace(tzinfo=timezone)
-
-
-def _decode_p1_unitfloat(string: str) -> Tuple[float, str]:
-    """
-    Return a decoded version of a float with a unit attached
-    """
-
-    # Split off the unit
-    fstr, unit = string.split("*")
-
-    return float(fstr), unit
 
 
 class P1OctetString(P1Object):
