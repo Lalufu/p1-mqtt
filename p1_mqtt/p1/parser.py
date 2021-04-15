@@ -106,7 +106,8 @@ class P1Parser:
                     telegram = P1Telegram(tstring)
                 except Exception as exc:
                     LOGGER.error(
-                        "Could not parse message as valid Telegram: %s", exc,
+                        "Could not parse message as valid Telegram: %s",
+                        exc,
                     )
                     continue
 

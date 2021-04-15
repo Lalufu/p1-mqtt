@@ -209,7 +209,8 @@ class P1Telegram:
 
         # I hope there's a more elegant way of doing this
         candidates: Tuple[SupportsDeviceID] = cast(
-            Tuple[SupportsDeviceID], tuple(x for x in self._objects if x.is_device_id),
+            Tuple[SupportsDeviceID],
+            tuple(x for x in self._objects if x.is_device_id),
         )
 
         if len(candidates) == 1:
