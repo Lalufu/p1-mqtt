@@ -8,6 +8,7 @@ import multiprocessing
 from typing import Any, BinaryIO, Dict, Optional
 
 import serial  # type: ignore
+import time
 
 from p1_mqtt.p1.parser import P1Parser
 
@@ -170,6 +171,14 @@ def p1serial_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
         # those to the MQTT process
         for telegram in telegrams:
             for subtelegram in telegram.split_by_channel():
+                # Look at the time stamp of the telegram, and compare with
+                # the local time
+                LOGGER.debug(
+                    "Local time: %f, telegram time: %f, difference %f",
+                    time.time(),
+                    subtelegram.timestamp,
+                    time.time() - subtelegram.timestamp,
+                )
                 # Ignore errors here
                 try:
                     queue.put(subtelegram.to_mqtt())

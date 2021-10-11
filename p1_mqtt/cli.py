@@ -125,6 +125,13 @@ def p1_mqtt() -> None:
         "persistent across program restarts.",
     )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument(
+        "--prefer-local-timestamp",
+        action="store_true",
+        help="Use the device local time as authoritative in "
+        "the MQTT data instead of the timestamp from the P1 "
+        "telegram",
+    )
 
     args = parser.parse_args()
 
@@ -175,6 +182,8 @@ def p1_mqtt() -> None:
 
     if args.serial_dump:
         config["serial_dump"] = args.serial_dump
+
+    config["prefer_local_timestamp"] = args.prefer_local_timestamp
 
     LOGGER.debug("Completed config: %s", config)
 

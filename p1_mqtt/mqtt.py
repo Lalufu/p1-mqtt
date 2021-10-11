@@ -100,6 +100,15 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
         data = queue.get(block=True)
         LOGGER.debug("Read from queue: %s", data)
 
+        # See which timestamp we want to use as
+        # authoritative
+        if config["prefer_local_timestamp"]:
+            data["p1mqtt_timestamp"] = data["p1mqtt_collector_timestamp"]
+        else:
+            data["p1mqtt_timestamp"] = data["p1mqtt_telegram_timestamp"]
+
+        LOGGER.debug("Sent to mqtt: %s", data)
+
         client.publish(
             config["mqtt_topic"]
             % {

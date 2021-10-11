@@ -92,6 +92,11 @@ the program is `p1_mqtt/cli.py:p1_mqtt()`.
 
   Config file: Section `general`, `serial-dump`
 
+`--prefer-local-timestamp`
+: Use the time from the machine running p1-mqtt as the authoritative
+  time stamp on the data sent to MQTT, instead of the time stamp contained
+  in the telegrams themselves.
+
 ## Configuration file
 The program supports a configuration file to define behaviour. The
 configuration file is in .ini file syntax, and can contain multiple sections.
@@ -116,11 +121,21 @@ under keys starting with `p1_`.
 
 In addition the following fields are added:
 
-- a `p1mqtt_timestamp` field is added, containing the time the measurement
+- a `p1mqtt_telegram_timestamp` field is added, containing the time the measurement
   was taken. This information is contained in the P1 telegram, and relies
   on the clock in the meter. Note that not all meters update values at
   the same frequency that telegrams are sent, multiple subsequent telegrams
   might contain the same timestamp and readings.
+
+- a `p1mqtt_collector_timestamp` field is added, containing the time the measurement
+  was taken. This information is taken from the clock of the machine
+  running p1-mqtt, and might be different from the time in `p1mqtt_telegram_timestamp`.
+
+- a `p1mqtt_timestamp` field is added, containing either of the
+  `p1mqtt_telegram_timestamp` and `p1mqtt_collector_timestamp` values.
+  The value chosed depends on the `--prefer-local-timestamp` command line
+  argument. For easier management this is the value that should be used
+  as the authoritative time stamp in further processing of the data.
 
 - a `p1mqtt_device_id` field is added, containing the serial number of the meter
   that this set of measurements belongs to.
