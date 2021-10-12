@@ -3,6 +3,8 @@
 Test the P1 MQTT export
 """
 
+from unittest import mock
+
 import pytest
 
 from p1_mqtt.p1.parser import P1Parser
@@ -58,6 +60,7 @@ TESTDATA = (
             "p1_voltage_l1": 229.0,
             "p1_voltage_sag_l1_count": 2.0,
             "p1_voltage_swell_l1_count": 0.0,
+            "p1mqtt_collector_timestamp": 12345678,
         },
     ),
     (
@@ -127,6 +130,7 @@ TESTDATA = (
             "p1_voltage_swell_l1_count": 0.0,
             "p1_voltage_swell_l2_count": 0.0,
             "p1_voltage_swell_l3_count": 0.0,
+            "p1mqtt_collector_timestamp": 12345678,
         },
     ),
 )
@@ -142,6 +146,7 @@ def generate_test_list():
 
 
 @pytest.mark.parametrize("testcase,expected", generate_test_list())
+@mock.patch("time.time", mock.MagicMock(return_value=12345678))
 def test_p1_mqtt(testcase, expected):
     """
     Test the MQTT export by parsing a telegram and inspecting
