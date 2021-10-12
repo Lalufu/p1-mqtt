@@ -132,6 +132,12 @@ def p1_mqtt() -> None:
         "the MQTT data instead of the timestamp from the P1 "
         "telegram",
     )
+    parser.add_argument(
+        "--time-ms",
+        action="store_true",
+        help="Send timestamps to MQTT in milliseconds instead of seconds. "
+        "This will only affect p1mqtt* timestamp values",
+    )
 
     args = parser.parse_args()
 
@@ -184,6 +190,8 @@ def p1_mqtt() -> None:
         config["serial_dump"] = args.serial_dump
 
     config["prefer_local_timestamp"] = args.prefer_local_timestamp
+
+    config["time_ms"] = args.time_ms
 
     LOGGER.debug("Completed config: %s", config)
 
