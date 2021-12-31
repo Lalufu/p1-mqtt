@@ -97,6 +97,10 @@ the program is `p1_mqtt/cli.py:p1_mqtt()`.
   time stamp on the data sent to MQTT, instead of the time stamp contained
   in the telegrams themselves.
 
+`--time-ms`
+: Send p1mqtt_\* time stamp values to MQTT in milliseconds instead of
+  seconds.
+
 ## Configuration file
 The program supports a configuration file to define behaviour. The
 configuration file is in .ini file syntax, and can contain multiple sections.

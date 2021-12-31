@@ -4,8 +4,8 @@ Class representing a P1 telegram and the messages contained within
 
 import collections
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Type, cast
 import time
+from typing import Any, Dict, List, Optional, Tuple, Type, cast
 
 from p1_mqtt.p1.objects import parse_p1_object
 from p1_mqtt.p1.p1object import P1Object, SupportsDeviceID, SupportsUnixtimestamp
@@ -154,7 +154,7 @@ class P1Telegram:
         if self.channel is not None:
             output["p1mqtt_channel"] = self.channel
 
-        output["p1mqtt_collector_timestamp"] = int(time.time())
+        output["p1mqtt_collector_timestamp"] = time.time()
 
         return output
 

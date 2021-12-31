@@ -100,6 +100,23 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
         data = queue.get(block=True)
         LOGGER.debug("Read from queue: %s", data)
 
+        # Set the required accuracy for time stamps
+        if config["time_ms"]:
+            data["p1mqtt_collector_timestamp"] = int(
+                data["p1mqtt_collector_timestamp"] * 1000
+            )
+            data["p1mqtt_telegram_timestamp"] = int(
+                data["p1mqtt_telegram_timestamp"] * 1000
+            )
+        else:
+            # Round times properly here
+            data["p1mqtt_collector_timestamp"] = int(
+                data["p1mqtt_collector_timestamp"] + 0.5
+            )
+            data["p1mqtt_telegram_timestamp"] = int(
+                data["p1mqtt_telegram_timestamp"] + 0.5
+            )
+
         # See which timestamp we want to use as
         # authoritative
         if config["prefer_local_timestamp"]:
