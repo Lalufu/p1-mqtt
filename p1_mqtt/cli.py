@@ -7,15 +7,20 @@ import codecs
 import configparser
 import logging
 import multiprocessing
+import os
 import time
 from typing import Any, Dict, List
 
 from .mqtt import mqtt_main
 from .p1serial import p1serial_main
 
-logging.basicConfig(
-    format="%(asctime)-15s %(levelname)s: %(message)s", level=logging.INFO
-)
+if "INVOCATION_ID" in os.environ:
+    # Running under systemd
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
+else:
+    logging.basicConfig(
+        format="%(asctime)-15s %(levelname)s: %(message)s", level=logging.INFO
+    )
 LOGGER = logging.getLogger(__name__)
 
 # Default values for command line args
