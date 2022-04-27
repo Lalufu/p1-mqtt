@@ -5,6 +5,10 @@ power meters via the so called P1 port and sends them to an MQTT gateway.
 See the website of [Netbeheer Nederland](https://www.netbeheernederland.nl/dossiers/slimme-meter-15/documenten)
 for information on the protocol and message format.
 
+Connection is possible either via direct serial connection to the meter,
+or via an intermediate device that presents the P1 telegrams via a TCP
+connection.
+
 The P1 protocol supports a bus of meters, where measurements from multiple
 meters can be deliviered through a single telegram. A common setup is to
 report on both electricity and gas consumption.
@@ -38,8 +42,14 @@ the program is `p1_mqtt/cli.py:p1_mqtt()`.
   for details on the syntax. Command line options given in addition to the
   config file override settings in the config file.
 
+`--host`
+: Host name or IP of device connected to the P1 meter
+
+`--port`
+: TCP port of device connected to the P1 meter
+
 `--device`
-: Device file of the serial port to use.
+: Device file of the serial port connected to the P1 meter
 
   Config file: Section `general`, `device`
 

@@ -10,8 +10,13 @@ from typing import Dict, List, Tuple, Type
 
 import pytz
 
-from .p1object import (P1Object, _decode_p1_octetstring, _decode_p1_tst,
-                       _decode_p1_unitfloat, _utc_unixtime)
+from .p1object import (
+    P1Object,
+    _decode_p1_octetstring,
+    _decode_p1_tst,
+    _decode_p1_unitfloat,
+    _utc_unixtime,
+)
 
 LOGGER = logging.getLogger(__name__)
 

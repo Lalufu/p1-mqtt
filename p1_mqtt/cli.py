@@ -12,7 +12,7 @@ import time
 from typing import Any, Dict, List
 
 from .mqtt import mqtt_main
-from .p1serial import p1serial_main
+from .p1io import p1io_main
 
 if "INVOCATION_ID" in os.environ:
     # Running under systemd
@@ -48,6 +48,20 @@ def load_config_file(filename: str) -> Dict[str, Any]:
 
     if ini.has_option("general", "device"):
         config["device"] = ini.get("general", "device")
+
+    if ini.has_option("general", "host"):
+        config["host"] = ini.get("general", "host")
+
+    try:
+        if ini.has_option("general", "port"):
+            config["port"] = ini.getint("general", "port")
+    except ValueError:
+        LOGGER.error(
+            "%s: %s is not a valid value for port",
+            filename,
+            ini.get("general", "port"),
+        )
+        raise SystemExit(1)
 
     if ini.has_option("general", "mqtt-host"):
         config["mqtt_host"] = ini.get("general", "mqtt-host")
@@ -85,7 +99,10 @@ def p1_mqtt() -> None:
     Main function for the p1-mqtt script
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--device", "-d", type=str, help="Serial device to use")
+    parser_input = parser.add_mutually_exclusive_group()
+    parser_input.add_argument("--device", "-d", type=str, help="Serial device to use")
+    parser_input.add_argument("--host", type=str, help="TCP source host to use")
+    parser.add_argument("--port", type=int, help="TCP source port to use")
     parser.add_argument("--config", type=str, help="Configuration file to load")
     parser.add_argument(
         "--mqtt-topic",
@@ -115,10 +132,11 @@ def p1_mqtt() -> None:
         "to use DSMR 4.0 and newer.",
     )
     parser.add_argument(
+        "--source-dump",
         "--serial-dump",
         type=str,
         default=None,
-        help="File name to dump all data read from the serial device to. "
+        help="File name to dump all data read from the source to. "
         "This is mainly for debugging purposes.",
     )
     parser.add_argument(
@@ -159,6 +177,12 @@ def p1_mqtt() -> None:
     if args.device:
         config["device"] = args.device
 
+    if args.host:
+        config["host"] = args.host
+
+    if args.port:
+        config["port"] = args.port
+
     if args.mqtt_topic:
         config["mqtt_topic"] = args.mqtt_topic
     elif "mqtt_topic" not in config:
@@ -191,8 +215,8 @@ def p1_mqtt() -> None:
     else:
         config["dsmr"] = "4.0"
 
-    if args.serial_dump:
-        config["serial_dump"] = args.serial_dump
+    if args.source_dump:
+        config["source_dump"] = args.source_dump
 
     config["prefer_local_timestamp"] = args.prefer_local_timestamp
 
@@ -200,8 +224,8 @@ def p1_mqtt() -> None:
 
     LOGGER.debug("Completed config: %s", config)
 
-    if "device" not in config:
-        LOGGER.error("No serial device given")
+    if not ("device" in config or ("host" in config and "port" in config)):
+        LOGGER.error("No serial device or no host/port given as data source")
         raise SystemExit(1)
 
     if "mqtt_host" not in config:
@@ -214,7 +238,7 @@ def p1_mqtt() -> None:
 
     procs: List[multiprocessing.Process] = []
     p1_proc = multiprocessing.Process(
-        target=p1serial_main, name="p1", args=(p1_mqtt_queue, config)
+        target=p1io_main, name="p1", args=(p1_mqtt_queue, config)
     )
     p1_proc.start()
     procs.append(p1_proc)
