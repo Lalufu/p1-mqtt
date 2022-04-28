@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "p1-mqtt"
-version = "0.1.0"
+version = "0.1.1"
 description = "A gateway from smart meters using the P1 protocol to MQTT"
 authors = ["Ralf Ertzinger <ralf@skytale.net>"]
 license = "GPL-3.0-only"
