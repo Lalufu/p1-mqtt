@@ -22,6 +22,12 @@ flake8 = "^3.8.4"
 [tool.poetry.scripts]
 p1-mqtt = "p1_mqtt.cli:p1_mqtt"
 
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 88
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
