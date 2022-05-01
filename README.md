@@ -22,18 +22,21 @@ for talking to MQTT.
 
 ## Installation
 
-This project uses [Poetry](https://python-poetry.org/) for dependency
-management, and it's probably easiest to use this, Executing `poetry install 
---no-dev` followed by `poetry run p1-mqtt` from the git checkout root should
-set up a venv, install the required dependencies into a venv and run
-the main program.
-
-Installation via pip into a venv is also possible with `pip install .` from
-the git checkout root. This will also create the executable scripts in the
-`bin` dir of the checkout.
+Installation via pip into a venv is possible with `pip install .` from
+the git checkout root, or via `pip install git+https://github.com/Lalufu/p1-mqtt`.
+This will also create the executable scripts in the `bin` dir of the venv.
 
 In case you want to do things manually, the main entry point into
 the program is `p1_mqtt/cli.py:p1_mqtt()`.
+
+## Development
+
+This project uses [Poetry](https://python-poetry.org/) for dependency
+management, and it's probably easiest to use this, Executing `poetry install 
+` followed by `poetry run p1-mqtt` from the git checkout root should
+set up a venv, install the required dependencies into a venv and run
+the main program.
+
 
 ## Running
 
@@ -75,7 +78,7 @@ the program is `p1_mqtt/cli.py:p1_mqtt()`.
   through python formatting, and can contain references to the variables `device_id`
   and `channel`. `device_id` will contain the serial number of the meter, which
   is part of the P1 telegram.
-  `channel` will contain the channel assigned to a meter. The mail electicity
+  `channel` will contain the channel assigned to a meter. The main electricity
   meter will use channel 0, while other meters on the bus use channels 1
   and up.
   The default is `p1-mqtt/tele/%(channel)s/%(device_id)s/SENSOR`.
