@@ -141,6 +141,3 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
             },
             json.dumps(data),
         )
-
-        LOGGER.debug("Sleeping %d seconds" % config["mqtt_rate"])
-        time.sleep(config['mqtt_rate'])
