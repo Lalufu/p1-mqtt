@@ -32,7 +32,7 @@ the program is `p1_mqtt/cli.py:p1_mqtt()`.
 ## Development
 
 This project uses [Poetry](https://python-poetry.org/) for dependency
-management, and it's probably easiest to use this, Executing `poetry install 
+management, and it's probably easiest to use this, Executing `poetry install
 ` followed by `poetry run p1-mqtt` from the git checkout root should
 set up a venv, install the required dependencies into a venv and run
 the main program.
@@ -92,6 +92,12 @@ the main program.
   `p1-mqtt-gateway`.
 
   Config file: Section `general`, `mqtt-client-id`
+
+`--mqtt-rate`
+: The time between mqtt messages sent to the broker in seconds.
+  The default is `0` (which means as soon as a telegram is ready).
+
+  Config file: Section `general`, `mqtt-rate`
 
 `--dsmr-22`
 : Use DSMR 2.2 compatible parameters when setting up the serial port. This
