@@ -242,6 +242,3 @@ def p1io_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
                     queue.put(subtelegram.to_mqtt())
                 except Exception:
                     pass
-
-        LOGGER.debug("Sleeping %d seconds" % config["mqtt_rate"])
-        time.sleep(config['mqtt_rate'])
