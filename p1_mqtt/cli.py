@@ -179,6 +179,7 @@ def p1_mqtt() -> None:
     parser.add_argument(
         "--mqtt-rate",
         action="store_true",
+        type=int,
         help="Time between messages sent to the broker in seconds.",
     )
 
@@ -229,6 +230,9 @@ def p1_mqtt() -> None:
     elif "mqtt_rate" not in config:
         # Not set through config file, not set through CLI, use default
         config["mqtt_rate"] = DEFAULTS["mqtt_rate"]
+    # mqtt_rate sanity check
+    if config["mqtt_rate"] < 0:
+        config["mqtt_rate"] = 0
 
     if args.buffer_size:
         config["buffer_size"] = args.buffer_size
