@@ -77,6 +77,9 @@ def load_config_file(filename: str) -> Dict[str, Any]:
         )
         raise SystemExit(1)
 
+    if ini.has_option("general", "mqtt-topic"):
+        config["mqtt_topic"] = ini.get("general", "mqtt-topic")
+
     if ini.has_option("general", "mqtt-client-id"):
         config["mqtt_client_id"] = ini.get("general", "mqtt-client-id")
 
