@@ -29,6 +29,7 @@ DEFAULTS: Dict[str, Any] = {
     "buffer_size": 100000,
     "mqtt_topic": "p1-mqtt/tele/%(channel)s/%(device_id)s/SENSOR",
     "mqtt_client_id": "p1-mqtt-gateway",
+    "mqtt_rate": 0,
 }
 
 
@@ -91,6 +92,17 @@ def load_config_file(filename: str) -> Dict[str, Any]:
             "%s: %s is not a valid value for buffer-size",
             filename,
             ini.get("general", "buffer-size"),
+        )
+        raise SystemExit(1)
+
+    try:
+        if ini.has_option("general", "mqtt-rate"):
+            config["mqtt_rate"] = ini.getint("general", "mqtt-rate")
+    except ValueError:
+        LOGGER.error(
+            "%s: %s is not a valid value for mqtt-rate",
+            filename,
+            ini.get("general", "mqtt-rate"),
         )
         raise SystemExit(1)
 
@@ -164,6 +176,12 @@ def p1_mqtt() -> None:
         help="Send timestamps to MQTT in milliseconds instead of seconds. "
         "This will only affect p1mqtt* timestamp values",
     )
+    parser.add_argument(
+        "--mqtt-rate",
+        action="store_true",
+        type=int,
+        help="Time between messages sent to the broker in seconds.",
+    )
 
     args = parser.parse_args()
 
@@ -206,6 +224,15 @@ def p1_mqtt() -> None:
     elif "mqtt_client_id" not in config:
         # Not set through config file, not set through CLI, use default
         config["mqtt_client_id"] = DEFAULTS["mqtt_client_id"]
+
+    if args.mqtt_rate:
+        config["mqtt_rate"] = args.mqtt_rate
+    elif "mqtt_rate" not in config:
+        # Not set through config file, not set through CLI, use default
+        config["mqtt_rate"] = DEFAULTS["mqtt_rate"]
+    # mqtt_rate sanity check
+    if config["mqtt_rate"] < 0:
+        config["mqtt_rate"] = 0
 
     if args.buffer_size:
         config["buffer_size"] = args.buffer_size

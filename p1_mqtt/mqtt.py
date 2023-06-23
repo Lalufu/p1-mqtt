@@ -92,6 +92,9 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
         break
 
+    rate = config["mqtt_rate"]
+    last_message = 0
+
     while True:
         # This will sleep unless we're connected
         with connected_cv:
@@ -99,6 +102,12 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
         data = queue.get(block=True)
         LOGGER.debug("Read from queue: %s", data)
+
+        now = time.monotonic()
+        if now - last_message < rate:
+            continue
+
+        last_message = now
 
         # The paho thread may have died (see
         # https://github.com/eclipse/paho.mqtt.python/pull/674)
