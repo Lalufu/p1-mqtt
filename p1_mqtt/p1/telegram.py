@@ -41,7 +41,7 @@ class P1Telegram:
         by the P1Builder class):
 
         - It will start with a '/' character
-        - It will end with a '\n\r|....\n\r' sequence, where the .... can be
+        - It will end with a '\n\r!....\n\r' sequence, where the .... are
           hex chars
         - The data between the initial / and the terminating ! does not contain
           any further / or !
@@ -71,7 +71,7 @@ class P1Telegram:
         Validate the checksum of the data in the internal buffer
 
         The checksum is a 16 bit number, encoded in the last four hex
-        characters, and is calculated over everything from the star of
+        characters, and is calculated over everything from the start of
         the buffer up until and including the ! before the checksum
 
         The buffer ends with the checksum and \n\r, take this into
