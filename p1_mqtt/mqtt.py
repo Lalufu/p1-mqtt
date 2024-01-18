@@ -99,7 +99,7 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
         break
 
     rate = config["mqtt_rate"]
-    last_message = 0
+    last_message = 0.0
 
     while True:
         # This will sleep unless we're connected

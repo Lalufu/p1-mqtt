@@ -13,26 +13,30 @@ from typing_extensions import Protocol
 LOGGER = logging.getLogger(__name__)
 
 
-# This is a class describing the ability to support
-# the to_unixtimestamp functionality
 class SupportsUnixtimestamp(Protocol):
+    """
+    This is a class describing the ability to support
+    the to_unixtimestamp functionality
+    """
+
     def to_unixtimestamp(self) -> int:
         """
         Return a Unix time stamp representing a timestamp
         information within this object
         """
-        ...
 
 
-# This is a class describing the ability to support
-# the device_id functionality
 class SupportsDeviceID(Protocol):
+    """
+    This is a class describing the ability to support
+    the device_id functionality
+    """
+
     def device_id(self) -> str:
         """
         Return a string representing a device ID
         information within this object
         """
-        ...
 
 
 def _decode_p1_octetstring(string: str) -> bytearray:

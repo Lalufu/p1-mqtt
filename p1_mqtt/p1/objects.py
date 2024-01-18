@@ -8,8 +8,6 @@ import logging
 import re
 from typing import Dict, List, Tuple, Type
 
-import pytz
-
 from .p1object import (
     P1Object,
     _decode_p1_octetstring,
@@ -32,9 +30,9 @@ def parse_p1_object(string: str) -> P1Object:
 
     tclass = None
 
-    for known_class in P1CLASSES:
-        if re.match(r"^" + known_class + r"\(", string):
-            tclass = P1CLASSES[known_class]
+    for name, cls in P1CLASSES.items():
+        if re.match(r"^" + name + r"\(", string):
+            tclass = cls
             break
 
     if tclass is None:
@@ -56,9 +54,9 @@ def register_p1(reference: str):
 
         if reference in P1CLASSES:
             raise KeyError(
-                "Reference %s already registered for class %s "
-                "while attempting to register class %s"
-                % (reference, P1CLASSES[reference], cls)
+                f"Reference {reference} already registered for class "
+                f"{P1CLASSES[reference]} while attempting to register class "
+                f"{cls}"
             )
         P1CLASSES[reference] = cls
         return wrapper_register_p1

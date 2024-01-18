@@ -51,7 +51,7 @@ class TCPFullReader:
                 host,
                 port,
             )
-            raise SystemExit(1)
+            raise SystemExit(1)  # pylint: disable=raise-missing-from
 
     def read(self, size: int) -> bytes:
         """
@@ -137,11 +137,10 @@ def p1io_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
     # If needed, open the source log file
     dumpfilename = config.get("source_dump")
+    dumpfile: Optional[BinaryIO] = None
     if dumpfilename:
-        dumpfile: Optional[BinaryIO] = open(dumpfilename, "wb")
+        dumpfile = open(dumpfilename, "wb")  # pylint: disable=consider-using-with
         LOGGER.info("Writing source data to %s", dumpfilename)
-    else:
-        dumpfile = None
 
     # Open the data source.
     # If a host and port were given, prefer those over a serial port.

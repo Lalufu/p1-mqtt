@@ -45,7 +45,7 @@ def load_config_file(filename: str) -> Dict[str, Any]:
             ini.read_file(configfile)
     except Exception as exc:
         LOGGER.error("Could not read config file %s: %s", filename, exc)
-        raise SystemExit(1)
+        raise SystemExit(1)  # pylint: disable=raise-missing-from
 
     if ini.has_option("general", "device"):
         config["device"] = ini.get("general", "device")
@@ -62,7 +62,7 @@ def load_config_file(filename: str) -> Dict[str, Any]:
             filename,
             ini.get("general", "port"),
         )
-        raise SystemExit(1)
+        raise SystemExit(1)  # pylint: disable=raise-missing-from
 
     if ini.has_option("general", "mqtt-host"):
         config["mqtt_host"] = ini.get("general", "mqtt-host")
@@ -76,7 +76,7 @@ def load_config_file(filename: str) -> Dict[str, Any]:
             filename,
             ini.get("general", "mqtt-port"),
         )
-        raise SystemExit(1)
+        raise SystemExit(1)  # pylint: disable=raise-missing-from
 
     if ini.has_option("general", "mqtt-topic"):
         config["mqtt_topic"] = ini.get("general", "mqtt-topic")
@@ -93,7 +93,7 @@ def load_config_file(filename: str) -> Dict[str, Any]:
             filename,
             ini.get("general", "buffer-size"),
         )
-        raise SystemExit(1)
+        raise SystemExit(1)  # pylint: disable=raise-missing-from
 
     try:
         if ini.has_option("general", "mqtt-rate"):
@@ -104,7 +104,7 @@ def load_config_file(filename: str) -> Dict[str, Any]:
             filename,
             ini.get("general", "mqtt-rate"),
         )
-        raise SystemExit(1)
+        raise SystemExit(1)  # pylint: disable=raise-missing-from
 
     return config
 
