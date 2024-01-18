@@ -248,8 +248,8 @@ class P1LongFailureLog(P1Object):
         # power returned), and seconds (indicating the duration
         # of failure)
 
-        if len(self.values) - 2 != logcount / 2:
-            ValueError("Inconsistent log buffer length")
+        if (len(self.values) - 2) / 2 != logcount:
+            raise ValueError("Inconsistent log buffer length")
 
         index = 2
         while logcount > 0:
