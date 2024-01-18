@@ -12,6 +12,7 @@ import time
 from typing import Any, Dict
 
 import paho.mqtt.client as mqtt  # type: ignore
+from typing_extensions import TypedDict
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,8 +29,13 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
     # connected_cv is a condition variable that is protecing
     # access to connected, because it is modified from a different
     # thread.
-    connected = False
-    connected_cv = threading.Condition()
+    ConnectStatus = TypedDict(  # pylint: disable=invalid-name
+        "ConnectStatus", {"connected": bool, "connected_cv": threading.Condition}
+    )
+    connect_status: ConnectStatus = {
+        "connected": False,
+        "connected_cv": threading.Condition(),
+    }
 
     def mqtt_on_connect(
         client: mqtt.Client, userdata: Any, flags: Dict[str, Any], rc: int
@@ -39,14 +45,14 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
         This is called from a different thread
         """
-        nonlocal connected, connected_cv
+        del client
         LOGGER.debug("mqtt on_connect called, flags=%s, rc=%d", flags, rc)
 
-        with connected_cv:
-            connected = rc == 0
-            if connected:
+        with userdata["connected_cv"]:
+            userdata["connected"] = rc == 0
+            if userdata["connected"]:
                 LOGGER.info("Connected to MQTT")
-                connected_cv.notify()
+                userdata["connected_cv"].notify()
 
     def mqtt_on_disconnect(client: mqtt.Client, userdata: Any, rc: int) -> None:
         """
@@ -54,21 +60,21 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
         This is called from a different thread
         """
-        nonlocal connected, connected_cv
+        del client
         LOGGER.debug("mqtt on_disconnect called, rc=%d", rc)
         if rc != 0:
             # Unexpected disconnect
             LOGGER.error("Unexpected disconnect from MQTT")
 
-        with connected_cv:
-            connected = False
+        with userdata["connected_cv"]:
+            userdata["connected"] = False
 
             # We do not have to wake up the waiter for this,
             # because they'll just go back to sleep anyway
 
     LOGGER.info("mqtt process starting")
 
-    client = mqtt.Client(config["mqtt_client_id"])
+    client = mqtt.Client(config["mqtt_client_id"], userdata=connect_status)
     client.on_connect = mqtt_on_connect
     client.on_disconnect = mqtt_on_disconnect
 
@@ -97,8 +103,8 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
     while True:
         # This will sleep unless we're connected
-        with connected_cv:
-            connected_cv.wait_for(lambda: connected)
+        with connect_status["connected_cv"]:
+            connect_status["connected_cv"].wait_for(lambda: connect_status["connected"])
 
         data = queue.get(block=True)
         LOGGER.debug("Read from queue: %s", data)
