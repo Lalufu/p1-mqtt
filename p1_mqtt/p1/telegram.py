@@ -97,7 +97,7 @@ class P1Telegram:
 
         if remainder != msgsum:
             raise ValueError(
-                "Invalid checksum, expected %04x, got %04x" % (msgsum, remainder)
+                f"Invalid checksum, expected {msgsum:04x}, got {remainder:04x}"
             )
 
     def _parse_objects(self) -> None:

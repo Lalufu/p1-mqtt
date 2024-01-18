@@ -61,7 +61,7 @@ def _decode_p1_tst(string: str) -> datetime.datetime:
     elif string.endswith("W"):
         timezone = pytz.timezone("Etc/GMT-1")
     else:
-        raise ValueError("%s is not a valid P1 TST" % (string,))
+        raise ValueError(f"{string} is not a valid P1 TST")
 
     string = string[:-1]
 

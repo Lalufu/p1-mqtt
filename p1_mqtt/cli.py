@@ -127,7 +127,7 @@ def p1_mqtt() -> None:
         "references to variables `serial` (containing the serial number "
         "of the device generating the data) and `channel` (containing the "
         "channel of the device generating the data). "
-        + ("(Default: %(mqtt_topic)s)" % DEFAULTS).replace("%", "%%"),
+        f"(Default: {DEFAULTS['mqtt_topic'].replace('%','%%')})",
     )
     parser.add_argument("--mqtt-host", type=str, help="MQTT server to connect to")
     parser.add_argument(

@@ -38,7 +38,7 @@ def parse_p1_object(string: str) -> P1Object:
             break
 
     if tclass is None:
-        raise ValueError("Ignoring object '%s', unknown reference'" % (string,))
+        raise ValueError(f"Ignoring object '{string}', unknown reference'")
 
     return tclass(string)
 
