@@ -178,7 +178,6 @@ def p1_mqtt() -> None:
     )
     parser.add_argument(
         "--mqtt-rate",
-        action="store_true",
         type=int,
         help="Time between messages sent to the broker in seconds.",
     )
