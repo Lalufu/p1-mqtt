@@ -61,6 +61,16 @@ the main program.
 
   Config file: Section `general`, `mqtt-host`
 
+`--mqtt-username`
+: The MQTT host username.
+
+  Config file: Section `general`, `mqtt-username`
+
+`--mqtt-password`
+: The MQTT host password.
+
+  Config file: Section `general`, `mqtt-password`
+
 `--mqtt-port`
 : The MQTT port number to connect to. Defaults to 1883.
 

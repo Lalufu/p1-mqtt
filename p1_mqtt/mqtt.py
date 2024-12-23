@@ -69,6 +69,7 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
     LOGGER.info("mqtt process starting")
 
     client = mqtt.Client(config["mqtt_client_id"])
+    client.username_pw_set(username=config["mqtt_username"], password=config["mqtt_password"])
     client.on_connect = mqtt_on_connect
     client.on_disconnect = mqtt_on_disconnect
 

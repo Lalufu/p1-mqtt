@@ -67,6 +67,13 @@ def load_config_file(filename: str) -> Dict[str, Any]:
     if ini.has_option("general", "mqtt-host"):
         config["mqtt_host"] = ini.get("general", "mqtt-host")
 
+    if ini.has_option("general", "mqtt-username"):
+        config["mqtt_username"] = ini.get("general", "mqtt-username")
+
+    if ini.has_option("general", "mqtt-password"):
+        config["mqtt_password"] = ini.get("general", "mqtt-password")
+
+
     try:
         if ini.has_option("general", "mqtt-port"):
             config["mqtt_port"] = ini.getint("general", "mqtt-port")
@@ -181,6 +188,18 @@ def p1_mqtt() -> None:
         action="store_true",
         type=int,
         help="Time between messages sent to the broker in seconds.",
+    )
+    parser.add_argument(
+        "--mqtt-username",
+        action="store_true",
+        type=str,
+        help="Username to sign into the mqtt server with",
+    )
+    parser.add_argument(
+        "--mqtt-password",
+        action="store_true",
+        type=str,
+        help="Password to sign into the mqtt server with",
     )
 
     args = parser.parse_args()
