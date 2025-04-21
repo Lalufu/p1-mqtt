@@ -11,7 +11,8 @@ import threading
 import time
 from typing import Any
 
-import paho.mqtt.client as mqtt  # type: ignore
+import paho.mqtt
+import paho.mqtt.client as mqtt
 from typing_extensions import TypedDict
 
 LOGGER = logging.getLogger(__name__)
@@ -38,7 +39,11 @@ def mqtt_main(queue: multiprocessing.Queue, config: dict[str, Any]) -> None:
     }
 
     def mqtt_on_connect(
-        client: mqtt.Client, userdata: Any, flags: dict[str, Any], rc: int
+        client: mqtt.Client,
+        userdata: Any,
+        flags: mqtt.ConnectFlags,
+        reason_code: mqtt.ReasonCode,
+        properties: mqtt.Properties | None,
     ) -> None:
         """
         Callback for the on_connect event
@@ -46,23 +51,39 @@ def mqtt_main(queue: multiprocessing.Queue, config: dict[str, Any]) -> None:
         This is called from a different thread
         """
         del client
-        LOGGER.debug("mqtt on_connect called, flags=%s, rc=%d", flags, rc)
+        LOGGER.debug(
+            "mqtt on_connect called, flags=%s, rc=%s, properties=%s",
+            flags,
+            reason_code,
+            properties,
+        )
 
         with userdata["connected_cv"]:
-            userdata["connected"] = rc == 0
+            userdata["connected"] = reason_code == 0
             if userdata["connected"]:
                 LOGGER.info("Connected to MQTT")
                 userdata["connected_cv"].notify()
 
-    def mqtt_on_disconnect(client: mqtt.Client, userdata: Any, rc: int) -> None:
+    def mqtt_on_disconnect(
+        client: mqtt.Client,
+        userdata: Any,
+        flags: mqtt.DisconnectFlags,
+        reason_code: mqtt.ReasonCode,
+        properties: mqtt.Properties | None,
+    ) -> None:
         """
         Callback for the on_disconnect event
 
         This is called from a different thread
         """
         del client
-        LOGGER.debug("mqtt on_disconnect called, rc=%d", rc)
-        if rc != 0:
+        LOGGER.debug(
+            "mqtt on_disconnect called, flags=%s, rc=%s, propreties=%s",
+            flags,
+            reason_code,
+            properties,
+        )
+        if reason_code != 0:
             # Unexpected disconnect
             LOGGER.error("Unexpected disconnect from MQTT")
 
@@ -72,9 +93,13 @@ def mqtt_main(queue: multiprocessing.Queue, config: dict[str, Any]) -> None:
             # We do not have to wake up the waiter for this,
             # because they'll just go back to sleep anyway
 
-    LOGGER.info("mqtt process starting")
+    LOGGER.info("mqtt process starting, paho.mqtt version %s", paho.mqtt.__version__)
 
-    client = mqtt.Client(config["mqtt_client_id"], userdata=connect_status)
+    client = mqtt.Client(
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+        client_id=config["mqtt_client_id"],
+        userdata=connect_status,
+    )
     client.on_connect = mqtt_on_connect
     client.on_disconnect = mqtt_on_disconnect
 
@@ -114,13 +139,6 @@ def mqtt_main(queue: multiprocessing.Queue, config: dict[str, Any]) -> None:
             continue
 
         last_message = now
-
-        # The paho thread may have died (see
-        # https://github.com/eclipse/paho.mqtt.python/pull/674)
-        # Check for this and die completely if true
-        if not client._thread.is_alive():  # pylint: disable=protected-access
-            LOGGER.error("mqtt publishing thread died, bailing out")
-            raise SystemExit(1)
 
         # Set the required accuracy for time stamps
         if config["time_ms"]:
