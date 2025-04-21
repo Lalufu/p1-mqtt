@@ -17,12 +17,12 @@ p1-mqtt = "p1_mqtt.cli:p1_mqtt"
 
 [tool.poetry.group.dev.dependencies]
 fixit = "^2.1.0"
-pytest = "^8.3.4"
+pytest = "^8.3.5"
 mypy = "^1.15.0"
 black = "^25.1.0"
-isort = "^6.0.0"
-flake8 = "^7.1.1"
-pylint = "^3.3.4"
+isort = "^6.0.1"
+flake8 = "^7.2.0"
+pylint = "^3.3.6"
 types-pytz = "^2023.3.1.1"
 python-lsp-server = "^1.12.2"
 
