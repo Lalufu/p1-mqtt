@@ -166,6 +166,10 @@ def p1io_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
             stopbits=portconf["stopbits"],
             timeout=30,
         )
+    else:
+        # This cannot be hit, because of the way configuration parsing works,
+        # but pylint can't figure that out
+        raise ValueError("Neither host nor device given")
 
     parser = P1Parser()
     # In an endless loop, read data from the port

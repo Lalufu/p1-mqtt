@@ -6,27 +6,56 @@ authors = ["Ralf Ertzinger <ralf@skytale.net>"]
 license = "GPL-3.0-only"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.10"
 pyserial = "^3.5"
 pytz = "^2020.5"
 paho-mqtt = "^1.5.1"
-typing_extensions = "^3.7.4"
-
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.1"
-mypy = "^0.790"
-black = "^22.3.0"
-isort = "^5.7.0"
-flake8 = "^3.8.4"
+typing-extensions = "^4.9.0"
 
 [tool.poetry.scripts]
 p1-mqtt = "p1_mqtt.cli:p1_mqtt"
+
+[tool.poetry.group.dev.dependencies]
+fixit = "^2.1.0"
+pytest = "^8.3.4"
+mypy = "^1.15.0"
+black = "^25.1.0"
+isort = "^6.0.0"
+flake8 = "^7.1.1"
+pylint = "^3.3.4"
+types-pytz = "^2023.3.1.1"
+python-lsp-server = "^1.12.2"
 
 [tool.isort]
 profile = "black"
 
 [tool.black]
 line-length = 88
+
+[tool.pylint]
+    [tool.pylint.format]
+    # Consistency with black
+    max-line-length = 88
+
+    [tool.pylint.'MESSAGES CONTROL']
+    disable = [
+        'broad-except',
+        # Handled by black
+        'format',
+        # Import order is handled by isort
+        'wrong-import-order',
+        'fixme',
+        'too-many-locals',
+        'too-many-branches',
+        'too-many-nested-blocks',
+        'too-many-arguments',
+        'too-many-instance-attributes',
+        'too-many-statements',
+        'too-many-return-statements',
+        'too-few-public-methods',
+        # R0801 is the "duplicate code" warning
+        'R0801',
+    ]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
