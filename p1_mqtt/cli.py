@@ -78,6 +78,12 @@ def load_config_file(filename: str) -> dict[str, Any]:
         )
         raise SystemExit(1)  # pylint: disable=raise-missing-from
 
+    if ini.has_option("general", "mqtt-username"):
+        config["mqtt_username"] = ini.get("general", "mqtt-username")
+
+    if ini.has_option("general", "mqtt-password"):
+        config["mqtt_password"] = ini.get("general", "mqtt-password")
+
     if ini.has_option("general", "mqtt-topic"):
         config["mqtt_topic"] = ini.get("general", "mqtt-topic")
 
@@ -132,6 +138,12 @@ def p1_mqtt() -> None:
     parser.add_argument("--mqtt-host", type=str, help="MQTT server to connect to")
     parser.add_argument(
         "--mqtt-port", type=int, default=None, help="MQTT port to connect to"
+    )
+    parser.add_argument(
+        "--mqtt-username", type=str, default=None, help="MQTT user name to use"
+    )
+    parser.add_argument(
+        "--mqtt-password", type=str, default=None, help="MQTT password to use"
     )
     parser.add_argument(
         "--mqtt-client-id",
@@ -217,6 +229,18 @@ def p1_mqtt() -> None:
     elif "mqtt_port" not in config:
         # Not set through config file, not set through CLI, use default
         config["mqtt_port"] = DEFAULTS["mqtt_port"]
+
+    if args.mqtt_username:
+        config["mqtt_username"] = args.mqtt_username
+    elif "mqtt_username" not in config:
+        # Not set through config file, not set through CLI, use default
+        config["mqtt_username"] = None
+
+    if args.mqtt_password:
+        config["mqtt_password"] = args.mqtt_password
+    elif "mqtt_password" not in config:
+        # Not set through config file, not set through CLI, use default
+        config["mqtt_password"] = None
 
     if args.mqtt_client_id:
         config["mqtt_client_id"] = args.mqtt_client_id

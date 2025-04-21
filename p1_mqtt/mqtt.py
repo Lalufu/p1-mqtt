@@ -102,6 +102,7 @@ def mqtt_main(queue: multiprocessing.Queue, config: dict[str, Any]) -> None:
     )
     client.on_connect = mqtt_on_connect
     client.on_disconnect = mqtt_on_disconnect
+    client.username_pw_set(config["mqtt_username"], config["mqtt_password"])
 
     # This will spawn a thread that handles events and reconnects
     client.loop_start()
