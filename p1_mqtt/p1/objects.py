@@ -6,7 +6,7 @@ import datetime
 import functools
 import logging
 import re
-from typing import Dict, List, Tuple, Type
+from typing import Type
 
 from .p1object import (
     P1Object,
@@ -19,7 +19,7 @@ from .p1object import (
 LOGGER = logging.getLogger(__name__)
 
 # List of registered P1 object classes
-P1CLASSES: Dict[str, Type[P1Object]] = {}
+P1CLASSES: dict[str, Type[P1Object]] = {}
 
 
 def parse_p1_object(string: str) -> P1Object:
@@ -234,7 +234,7 @@ class P1LongFailureLog(P1Object):
 
     def __init__(self, string: str):
         super().__init__(string)
-        self.log: List[Tuple[datetime.datetime, float]] = []
+        self.log: list[tuple[datetime.datetime, float]] = []
 
         # The first value is the number of entries in the log
         logcount = int(self.values[0])

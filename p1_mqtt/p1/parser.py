@@ -5,7 +5,6 @@ teletrams
 
 import logging
 import re
-from typing import List, Tuple
 
 from p1_mqtt.p1.telegram import P1Telegram
 
@@ -30,7 +29,7 @@ class P1Parser:
         """
         return len(self._buffer)
 
-    def feed(self, inputdata: bytes) -> Tuple[P1Telegram, ...]:
+    def feed(self, inputdata: bytes) -> tuple[P1Telegram, ...]:
         """
         Add `inputdata` to the internal buffer, and try to see if there
         is a potential complete telegram to be found.
@@ -38,7 +37,7 @@ class P1Parser:
         Returns a list of found telegrams (which may be empty)
         """
 
-        found_telegrams: List[P1Telegram] = []
+        found_telegrams: list[P1Telegram] = []
         self._buffer += inputdata
 
         LOGGER.debug("Buffer after consuming inputdata: %s", self._buffer)

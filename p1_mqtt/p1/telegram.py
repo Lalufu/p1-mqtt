@@ -5,7 +5,7 @@ Class representing a P1 telegram and the messages contained within
 import collections
 import logging
 import time
-from typing import Any, Dict, List, Optional, Tuple, Type, cast
+from typing import Any, Type, cast
 
 from p1_mqtt.p1.objects import parse_p1_object
 from p1_mqtt.p1.p1object import P1Object, SupportsDeviceID, SupportsUnixtimestamp
@@ -19,7 +19,7 @@ class P1Telegram:
     """
 
     @classmethod
-    def from_objects(cls: Type["P1Telegram"], objects: List[P1Object]) -> "P1Telegram":
+    def from_objects(cls: Type["P1Telegram"], objects: list[P1Object]) -> "P1Telegram":
         """
         Create a new telegram populated with the given
         objects
@@ -49,7 +49,7 @@ class P1Telegram:
         self._meterid = ""
         self._buffer = buf
         self._validate_checksum()
-        self._objects: List[P1Object] = []
+        self._objects: list[P1Object] = []
         self.unparseable = 0  # Number of unparseable objects
         self._parse_objects()
 
@@ -128,7 +128,7 @@ class P1Telegram:
                 LOGGER.error("Could not parse object %s: %s", line, exc)
                 self.unparseable += 1
 
-    def to_mqtt(self) -> Dict[str, Any]:
+    def to_mqtt(self) -> dict[str, Any]:
         """
         Return a dictionary representation of the telegram that can be
         fed to mqtt.
@@ -140,7 +140,7 @@ class P1Telegram:
         add this an additional field.
         """
 
-        output: Dict[str, Any] = {}
+        output: dict[str, Any] = {}
 
         for obj in self._objects:
             output.update(obj.to_mqtt())
@@ -158,13 +158,13 @@ class P1Telegram:
 
         return output
 
-    def split_by_channel(self) -> Tuple["P1Telegram", ...]:
+    def split_by_channel(self) -> tuple["P1Telegram", ...]:
         """
         Return a tuple of new Telegrams, split by channel, where each new
         telegram only contains objects from one channel
         """
 
-        telegrams: Dict[int, List[P1Object]] = collections.defaultdict(list)
+        telegrams: dict[int, list[P1Object]] = collections.defaultdict(list)
 
         for obj in self._objects:
             # We ignore channel 3 for now, it's sorta weird
@@ -179,7 +179,7 @@ class P1Telegram:
         return tuple(P1Telegram.from_objects(x) for x in telegrams.values())
 
     @property
-    def timestamp(self) -> Optional[int]:
+    def timestamp(self) -> int | None:
         """
         Go through the objects and find ones that are marked as
         time stamp candidates. If there's only one, return the
@@ -189,8 +189,8 @@ class P1Telegram:
         """
 
         # I hope there's a more elegant way of doing this
-        candidates: Tuple[SupportsUnixtimestamp] = cast(
-            Tuple[SupportsUnixtimestamp],
+        candidates: tuple[SupportsUnixtimestamp] = cast(
+            tuple[SupportsUnixtimestamp],
             tuple(x for x in self._objects if x.is_timestamp),
         )
 
@@ -200,7 +200,7 @@ class P1Telegram:
         return None
 
     @property
-    def device_id(self) -> Optional[str]:
+    def device_id(self) -> str | None:
         """
         Go through the objects and find ones that are marked as
         device ID candidates. If there's only one, return the
@@ -210,8 +210,8 @@ class P1Telegram:
         """
 
         # I hope there's a more elegant way of doing this
-        candidates: Tuple[SupportsDeviceID] = cast(
-            Tuple[SupportsDeviceID],
+        candidates: tuple[SupportsDeviceID] = cast(
+            tuple[SupportsDeviceID],
             tuple(x for x in self._objects if x.is_device_id),
         )
 
@@ -221,7 +221,7 @@ class P1Telegram:
         return None
 
     @property
-    def channel(self) -> Optional[int]:
+    def channel(self) -> int | None:
         """
         If all objects in the telegram come from the same
         channel, return that channel number.

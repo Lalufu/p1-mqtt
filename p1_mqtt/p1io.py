@@ -7,7 +7,7 @@ import logging
 import multiprocessing
 import socket
 import time
-from typing import Any, BinaryIO, Dict, Optional
+from typing import Any, BinaryIO
 
 import serial  # type: ignore
 
@@ -77,7 +77,7 @@ class TCPFullReader:
             return b""
 
 
-def p1io_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
+def p1io_main(queue: multiprocessing.Queue, config: dict[str, Any]) -> None:
     """
     Main function for the P1 process.
 
@@ -137,7 +137,7 @@ def p1io_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
 
     # If needed, open the source log file
     dumpfilename = config.get("source_dump")
-    dumpfile: Optional[BinaryIO] = None
+    dumpfile: BinaryIO | None = None
     if dumpfilename:
         dumpfile = open(dumpfilename, "wb")  # pylint: disable=consider-using-with
         LOGGER.info("Writing source data to %s", dumpfilename)

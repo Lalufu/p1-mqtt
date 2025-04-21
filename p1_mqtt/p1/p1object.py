@@ -5,7 +5,7 @@ Object definition for the base P1Object
 import datetime
 import logging
 import re
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import pytz
 from typing_extensions import Protocol
@@ -72,7 +72,7 @@ def _decode_p1_tst(string: str) -> datetime.datetime:
     return datetime.datetime.strptime(string, "%y%m%d%H%M%S").replace(tzinfo=timezone)
 
 
-def _decode_p1_unitfloat(string: str) -> Tuple[float, str]:
+def _decode_p1_unitfloat(string: str) -> tuple[float, str]:
     """
     Return a decoded version of a float with a unit attached
     """
@@ -114,7 +114,7 @@ class P1Object:
             "Attempting to initialize %s as a %s", string, self.__class__.__name__
         )
 
-        self._mqtt_fields: Tuple[str, ...] = ()
+        self._mqtt_fields: tuple[str, ...] = ()
         self.is_timestamp = False
         self.is_device_id = False
 
@@ -138,7 +138,7 @@ class P1Object:
         cname = self.__class__.__name__
         return re.sub(r"(?<!^)(?=[A-Z])", "_", cname).lower()
 
-    def to_mqtt(self) -> Dict[str, Any]:
+    def to_mqtt(self) -> dict[str, Any]:
         """
         Return a representation of the object contents in a way
         that can be fed to mqtt as a dictionary.
@@ -158,7 +158,7 @@ class P1Object:
         More complex types are suggested to override this.
         """
 
-        output: Dict[str, Any] = {}
+        output: dict[str, Any] = {}
         if len(self._mqtt_fields) == 0:
             return output
 

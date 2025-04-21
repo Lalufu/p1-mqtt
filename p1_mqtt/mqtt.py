@@ -9,7 +9,7 @@ import logging
 import multiprocessing
 import threading
 import time
-from typing import Any, Dict
+from typing import Any
 
 import paho.mqtt.client as mqtt  # type: ignore
 from typing_extensions import TypedDict
@@ -17,7 +17,7 @@ from typing_extensions import TypedDict
 LOGGER = logging.getLogger(__name__)
 
 
-def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
+def mqtt_main(queue: multiprocessing.Queue, config: dict[str, Any]) -> None:
     """
     Main function for the MQTT process
 
@@ -38,7 +38,7 @@ def mqtt_main(queue: multiprocessing.Queue, config: Dict[str, Any]) -> None:
     }
 
     def mqtt_on_connect(
-        client: mqtt.Client, userdata: Any, flags: Dict[str, Any], rc: int
+        client: mqtt.Client, userdata: Any, flags: dict[str, Any], rc: int
     ) -> None:
         """
         Callback for the on_connect event

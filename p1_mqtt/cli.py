@@ -9,7 +9,7 @@ import logging
 import multiprocessing
 import os
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from .mqtt import mqtt_main
 from .p1io import p1io_main
@@ -24,7 +24,7 @@ else:
 LOGGER = logging.getLogger(__name__)
 
 # Default values for command line args
-DEFAULTS: Dict[str, Any] = {
+DEFAULTS: dict[str, Any] = {
     "mqtt_port": 1883,
     "buffer_size": 100000,
     "mqtt_topic": "p1-mqtt/tele/%(channel)s/%(device_id)s/SENSOR",
@@ -33,12 +33,12 @@ DEFAULTS: Dict[str, Any] = {
 }
 
 
-def load_config_file(filename: str) -> Dict[str, Any]:
+def load_config_file(filename: str) -> dict[str, Any]:
     """
     Load the ini style config file given by `filename`
     """
 
-    config: Dict[str, Any] = {}
+    config: dict[str, Any] = {}
     ini = configparser.ConfigParser()
     try:
         with codecs.open(filename, encoding="utf-8") as configfile:
@@ -265,7 +265,7 @@ def p1_mqtt() -> None:
         maxsize=config["buffer_size"]
     )
 
-    procs: List[multiprocessing.Process] = []
+    procs: list[multiprocessing.Process] = []
     p1_proc = multiprocessing.Process(
         target=p1io_main, name="p1", args=(p1_mqtt_queue, config)
     )
